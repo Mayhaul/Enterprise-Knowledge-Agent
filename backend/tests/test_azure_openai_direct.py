@@ -27,11 +27,11 @@ def test_azure_openai_direct():
 
     try:
         from openai import AzureOpenAI
-    except ImportError as exc:
+    except ImportError:
         pytest.fail(
             "The 'openai' package is required for this direct SDK test. "
             "Install it with: pip install openai"
-        ) from exc
+        )
 
     client = AzureOpenAI(
         azure_endpoint=endpoint,
