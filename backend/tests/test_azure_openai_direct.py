@@ -14,7 +14,10 @@ def test_azure_openai_direct():
     settings = get_settings()
 
     if not settings.AZURE_OPENAI_API_KEY:
-        pytest.skip("AZURE_OPENAI_API_KEY is not configured")
+        pytest.fail(
+            "AZURE_OPENAI_API_KEY is not loaded. Ensure backend/.env exists "
+            "and contains a non-empty AZURE_OPENAI_API_KEY."
+        )
 
     endpoint = settings.AZURE_OPENAI_ENDPOINT.rstrip("/")
     deployment = settings.AZURE_OPENAI_CHAT_DEPLOYMENT
