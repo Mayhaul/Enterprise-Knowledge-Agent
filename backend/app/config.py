@@ -1,14 +1,21 @@
 from functools import lru_cache
+from pathlib import Path
 from typing import List, Union
+
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+BACKEND_ENV = REPO_ROOT / "backend" / ".env"
+ROOT_ENV = REPO_ROOT / ".env"
 
 
 class Settings(BaseSettings):
     """Application settings and environment configuration."""
 
     model_config = SettingsConfigDict(
-        env_file=(".env", "../.env"),
+        env_file=(str(BACKEND_ENV), str(ROOT_ENV)),
         env_file_encoding="utf-8",
         extra="ignore",
     )
@@ -27,11 +34,10 @@ class Settings(BaseSettings):
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
-        """Support both JSON array format and comma-separated string in environment variables."""
+        """Support JSON array and comma-separated string origins."""
         if isinstance(v, str) and not v.strip().startswith("["):
             return [origin.strip() for origin in v.split(",") if origin.strip()]
-        return v  # Let pydantic parse standard JSON arrays
-
+        return v
 
     # 2. Microsoft Entra ID (Authentication)
     MOCK_AUTH_ENABLED: bool = True
